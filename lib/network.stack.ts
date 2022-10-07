@@ -1,6 +1,9 @@
 import { Stack, StackProps } from "aws-cdk-lib";
-import { Vpc, SubnetType } from "aws-cdk-lib/aws-ec2";
+import { SubnetType, Vpc } from "aws-cdk-lib/aws-ec2";
 import { Construct } from "constructs";
+
+export const WEB_SERVER_SUBNET_NAME: string = "web-server";
+export const DB_SUBNET_NAME: string = "database";
 
 export class NetworkStack extends Stack {
   readonly vtmsVpc: Vpc;
@@ -8,18 +11,19 @@ export class NetworkStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    this.vtmsVpc = new Vpc(this, "VTM-Service-VPC-1", {
-      vpcName: "VTM-Service-VPC-1",
-      availabilityZones: ["us-east-1a"],
+    this.vtmsVpc = new Vpc(this, "VTM-VPC", {
+      vpcName: "VTM-VPC",
+      cidr: "10.0.0.0/16",
+      maxAzs: 2,
       subnetConfiguration: [
         {
-          cidrMask: 24,
-          name: "application-subnet",
+          cidrMask: 28,
+          name: WEB_SERVER_SUBNET_NAME,
           subnetType: SubnetType.PUBLIC,
         },
         {
           cidrMask: 28,
-          name: "datastore-subnet",
+          name: DB_SUBNET_NAME,
           subnetType: SubnetType.PRIVATE_ISOLATED,
         },
       ],
